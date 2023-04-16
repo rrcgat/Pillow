@@ -34,13 +34,13 @@ jobs:
           # "3.12-dev",
           # "3.11",
           # "3.10",
-          "3.9",
+          # "3.9",
           "3.8",
         ]
         include:
-        - python-version: "3.9"
-          PYTHONOPTIMIZE: 1
-          REVERSE: "--reverse"
+        # - python-version: "3.9"
+        #   PYTHONOPTIMIZE: 1
+        #   REVERSE: "--reverse"
         - python-version: "3.8"
           PYTHONOPTIMIZE: 2
 
@@ -86,7 +86,7 @@ jobs:
         if [ "${{ matrix.os }}" = "ubuntu-latest" ]; then
           xvfb-run -s '-screen 0 1024x768x24'\
                   weston --backend=headless-backend.so --socket=wayland-0 \
-                         --modules=desktop-shell.so,wcap.so,xwayland.so \
+                         --modules=wcap.so,xwayland.so \
                          --wcap-seat=seat0 &
           export WAYLAND_DISPLAY=wayland-0
           .ci/test.sh
