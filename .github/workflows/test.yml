@@ -84,7 +84,10 @@ jobs:
           python3 -m pip install pytest-reverse
         fi
         if [ "${{ matrix.os }}" = "ubuntu-latest" ]; then
-          xvfb-run -s '-screen 0 1024x768x24' .ci/test.sh
+          xvfb-run -s '-screen 0 1024x768x24'\
+                  weston --backend=headless-backend.so --socket=wayland-0 & ;\
+                  export WAYLAND_DISPLAY=wayland-0 ;\
+                  .ci/test.sh
         else
           .ci/test.sh
         fi

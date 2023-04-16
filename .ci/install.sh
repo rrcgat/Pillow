@@ -22,7 +22,10 @@ set -e
 if [[ $(uname) != CYGWIN* ]]; then
     sudo apt-get -qq install libfreetype6-dev liblcms2-dev python3-tk\
                              ghostscript libffi-dev libjpeg-turbo-progs libopenjp2-7-dev\
-                             cmake meson imagemagick libharfbuzz-dev libfribidi-dev
+                             cmake meson imagemagick libharfbuzz-dev libfribidi-dev\
+                             wayland-protocols libwayland-dev libwayland-client0\
+                             libwayland-server0 libxkbcommon-dev libcairo2-dev\
+                             libpango1.0-dev mesa-utils weston wl-clipboard
 fi
 
 python3 -m pip install --upgrade pip
