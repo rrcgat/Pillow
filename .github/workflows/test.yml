@@ -86,7 +86,8 @@ jobs:
         if [ "${{ matrix.os }}" = "ubuntu-latest" ]; then
           xvfb-run -s '-screen 0 1024x768x24'\
                   weston --backend=headless-backend.so --socket=wayland-0 \
-                        --modules=desktop-shell.so,wcap.so --wcap-seat=seat0 &
+                         --modules=desktop-shell.so,wcap.so,xwayland.so \
+                         --wcap-seat=seat0 &
           export WAYLAND_DISPLAY=wayland-0
           .ci/test.sh
         else
