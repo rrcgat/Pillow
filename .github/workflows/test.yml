@@ -91,6 +91,7 @@ jobs:
           mkdir "$XDG_RUNTIME_DIR"
           xvfb-run -s '-screen 0 1024x768x24'\
                   sway -V -d -c /dev/null&
+          export WAYLAND_DISPLAY=wayland-1
           .ci/test.sh
         else
           .ci/test.sh
