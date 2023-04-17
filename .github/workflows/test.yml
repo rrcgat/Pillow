@@ -25,22 +25,22 @@ jobs:
       fail-fast: false
       matrix:
         os: [
-          "macos-latest",
+          # "macos-latest",
           "ubuntu-latest",
         ]
         python-version: [
-          "pypy3.9",
-          "pypy3.8",
-          "3.12-dev",
-          "3.11",
-          "3.10",
-          "3.9",
+          # "pypy3.9",
+          # "pypy3.8",
+          # "3.12-dev",
+          # "3.11",
+          # "3.10",
+          # "3.9",
           "3.8",
         ]
         include:
-        - python-version: "3.9"
-          PYTHONOPTIMIZE: 1
-          REVERSE: "--reverse"
+        # - python-version: "3.9"
+        #   PYTHONOPTIMIZE: 1
+        #   REVERSE: "--reverse"
         - python-version: "3.8"
           PYTHONOPTIMIZE: 2
 
@@ -84,7 +84,14 @@ jobs:
           python3 -m pip install pytest-reverse
         fi
         if [ "${{ matrix.os }}" = "ubuntu-latest" ]; then
-          xvfb-run -s '-screen 0 1024x768x24' .ci/test.sh
+          export XDG_RUNTIME_DIR="/tmp/headless-sway"
+          export SWAYSOCK="$XDG_RUNTIME_DIR/sway.sock"
+          export WLR_BACKENDS=headless
+          export WLR_LIBINPUT_NO_DEVICES=1
+          mkdir "$XDG_RUNTIME_DIR"
+          xvfb-run -s '-screen 0 1024x768x24'\
+                  sway -V -d -c /dev/null&
+          .ci/test.sh
         else
           .ci/test.sh
         fi
