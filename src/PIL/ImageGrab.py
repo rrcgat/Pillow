@@ -136,29 +136,35 @@ def grabclipboard():
         if shutil.which("wl-paste"):
             args = ["wl-paste"]
             output = subprocess.check_output(["wl-paste", "-l"]).decode()
-            clipboard_mimetypes = output.splitlines()
-
-            def find_mimetype():
-                for mime in Image.MIME.values():
-                    if mime in clipboard_mimetypes:
-                        return mime
+            clipboard_mimetypes = set(output.splitlines())
 
             Image.preinit()
-            mimetype = find_mimetype()
-            if not mimetype:
+            available_mimetypes = set(Image.MIME.values()) & clipboard_mimetypes
+            if not available_mimetypes:
                 Image.init()
-                mimetype = find_mimetype()
-            if mimetype:
-                args.extend(["-t", mimetype])
+                available_mimetypes = set(Image.MIME.values()) & clipboard_mimetypes
+            if available_mimetypes:
+                return _grab(
+                    *[["wl-paste", "-t", mimetype] for mimetype in available_mimetypes]
+                )
         elif shutil.which("xclip"):
             args = ["xclip", "-selection", "clipboard", "-t", "image/png", "-o"]
         else:
             msg = "wl-paste or xclip is required for ImageGrab.grabclipboard() on Linux"
             raise NotImplementedError(msg)
-        fh, filepath = tempfile.mkstemp()
+        return _grab(args)
+
+
+def _grab(*call_args):
+    fh, filepath = tempfile.mkstemp()
+    for args in call_args:
         subprocess.call(args, stdout=fh)
-        os.close(fh)
+        if os.path.getsize(fh):
+            break
+    os.close(fh)
+    try:
         im = Image.open(filepath)
         im.load()
+    finally:  # Remove it anyway or left it when Image.open fails (debug usage)?
         os.unlink(filepath)
-        return im
+    return im
